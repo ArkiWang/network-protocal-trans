@@ -1,0 +1,12 @@
+.vscode/
+*.zip
+*.tar
+*.gz
+*.7z
+*.rar
+*.tar.gz
+
+*.csv
+*.log
+*.txt
+
