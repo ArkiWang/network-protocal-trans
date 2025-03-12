@@ -10,3 +10,4 @@
 *.log
 *.txt
 
+__debug_bin*
