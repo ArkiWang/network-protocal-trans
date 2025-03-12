@@ -1,11 +1,15 @@
 package services
 
-import "hvuit.com/mqtt2ws/start"
+import (
+	"context"
 
+	"github.com/networkProtocalTrans/logger"
+)
 var (
 	MqttServer *mqttServer
+	appLogger = logger.DefaultLogger
 )
 
-func InitServices() {
-	MqttServer = GetMqttServer(start.Logger)
+func InitServices(ctx context.Context) {
+	MqttServer = GetMqttServer(ctx, appLogger)
 }
