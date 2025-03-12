@@ -143,10 +143,13 @@ func InitLogger(ctx context.Context, configPath string) *AppLogger {
 			loggers: loggers,
 		}
 	})
+	if DefaultLogger== nil {
+		panic("Failed to initialize logger")
+	}
 	return DefaultLogger
 }
 
-func (a *AppLogger) Entry(ctx context.Context, level string, kvs ...any) *logrus.Entry {
+func (a *AppLogger) entry(ctx context.Context, level string, kvs ...any) *logrus.Entry {
 	if logger, ok := a.loggers[level]; ok {
 		entry := logger.WithContext(ctx)
 		// 添加上下文信息
@@ -170,63 +173,63 @@ func (a *AppLogger) Entry(ctx context.Context, level string, kvs ...any) *logrus
 }
 
 func (a *AppLogger) LogInfof(ctx context.Context, message string, args ...any) {
-	if entry := a.Entry(ctx, "info"); entry != nil {
+	if entry := a.entry(ctx, "info"); entry != nil {
 		entry.Infof(message, args...)
 	}
 }
 
 // 其他日志级别方法类似
 func (a *AppLogger) LogWarnf(ctx context.Context, message string, args ...any) {
-	if entry := a.Entry(ctx, "warn"); entry != nil {
+	if entry := a.entry(ctx, "warn"); entry != nil {
 		entry.Warnf(message, args...)
 	}
 }
 
 func (a *AppLogger) LogErrorf(ctx context.Context, message string, args ...any) {
-	if entry := a.Entry(ctx, "error"); entry != nil {
+	if entry := a.entry(ctx, "error"); entry != nil {
 		entry.Errorf(message, args...)
 	}
 }
 
 func (a *AppLogger) LogDebugf(ctx context.Context, message string, args ...any) {
-	if entry := a.Entry(ctx, "debug"); entry != nil {
+	if entry := a.entry(ctx, "debug"); entry != nil {
 		entry.Debugf(message, args...)
 	}
 }
 
 func (a *AppLogger) LogFatalf(ctx context.Context, message string, args ...any) {
-	if entry := a.Entry(ctx, "fatal"); entry != nil {
+	if entry := a.entry(ctx, "fatal"); entry != nil {
 		entry.Fatalf(message, args...)
 	}
 }
 
 func (a *AppLogger) LogInfo(ctx context.Context, message string, kvs ...any) {
-	if entry := a.Entry(ctx, "info", kvs...); entry != nil {
+	if entry := a.entry(ctx, "info", kvs...); entry != nil {
 		entry.Info(message)
 	}
 }
 
 // 其他日志级别方法类似
 func (a *AppLogger) LogWarn(ctx context.Context, message string, kvs ...any) {
-	if entry := a.Entry(ctx, "warn", kvs...); entry != nil {
+	if entry := a.entry(ctx, "warn", kvs...); entry != nil {
 		entry.Warn(message)
 	}
 }
 
 func (a *AppLogger) LogError(ctx context.Context, message string, kvs ...any) {
-	if entry := a.Entry(ctx, "error", kvs...); entry != nil {
+	if entry := a.entry(ctx, "error", kvs...); entry != nil {
 		entry.Error(message)
 	}
 }
 
 func (a *AppLogger) LogDebug(ctx context.Context, message string, kvs ...any) {
-	if entry := a.Entry(ctx, "debug", kvs...); entry != nil {
+	if entry := a.entry(ctx, "debug", kvs...); entry != nil {
 		entry.Debug(message)
 	}
 }
 
 func (a *AppLogger) LogFatal(ctx context.Context, message string, kvs ...any) {
-	if entry := a.Entry(ctx, "fatal", kvs...); entry != nil {
+	if entry := a.entry(ctx, "fatal", kvs...); entry != nil {
 		entry.Fatal(message)
 	}
 }

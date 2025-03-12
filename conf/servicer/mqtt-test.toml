@@ -1,0 +1,49 @@
+# MQTT 服务器配置
+[server]
+name = "mqtt-test"
+# 服务器监听地址
+address = ":1883"
+# 是否启用调试模式
+debug = true
+
+# TCP 监听器配置
+[tcp]
+# 监听器ID
+id = "t1"
+# 最大连接数
+max_connections = 1000
+# 缓冲区大小（字节）
+buffer_size = 1024
+# 是否启用压缩
+enable_compression = true
+
+# 连接配置
+[connection]
+# 最大并发连接数
+max_connections = 1000
+# 心跳超时时间（秒）
+heartbeat_timeout = 60
+# 写入超时时间（秒）
+write_timeout = 10
+# 读取超时时间（秒）
+read_timeout = 10
+
+# 认证配置
+[auth]
+# 认证类型: none, basic, token
+type = "none"
+# 用户名密码认证配置
+[auth.basic]
+username = "admin"
+password = "password"
+
+# MQTT 协议配置
+[mqtt]
+# 最大消息大小（字节）
+max_message_size = 268435456
+# 保持连接时间（秒）
+keep_alive = 60
+# 会话过期时间（秒）
+session_expiry = 3600
+# 是否允许匿名访问
+allow_anonymous = true

@@ -5,11 +5,13 @@ import (
 
 	"github.com/networkProtocalTrans/logger"
 )
+
 var (
 	MqttServer *mqttServer
-	appLogger = logger.DefaultLogger
+	WsServer   *websocketServer
 )
 
 func InitServices(ctx context.Context) {
-	MqttServer = GetMqttServer(ctx, appLogger)
+	MqttServer = GetMqttServer(ctx, logger.DefaultLogger,"./conf/servicer/mqtt-test.toml")
+	WsServer = GetWebsocketServer(ctx, logger.DefaultLogger,"./conf/servicer/web-socket-test.toml")
 }

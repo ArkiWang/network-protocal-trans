@@ -5,11 +5,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/networkProtocalTrans/controller"
 	"github.com/networkProtocalTrans/logger"
 	"github.com/networkProtocalTrans/module"
 )
-
-var log = logger.DefaultLogger
 
 // 初始化路由
 func InitRouter(ctx context.Context) *gin.Engine {
@@ -34,7 +33,7 @@ func InitRouter(ctx context.Context) *gin.Engine {
 	}
 	ws := r.Group("/api/ws")
 	{
-		ws.GET("/test", RequestPanicHandler(func(ctx context.Context, req module.Request) (res module.Response, err error) { return nil, nil }))
+		ws.GET("/test", RequestPanicHandler(controller.WSTestHandler))
 	}
 	return r
 }
@@ -50,7 +49,7 @@ func HandleProtocolConversion(c *gin.Context) {
 func HandlePanic(c *gin.Context) {
 	ctx := c.Request.Context()
 	if r := recover(); r != nil {
-		log.LogFatalf(ctx, "gin router handler panic +%v", r)
+		logger.DefaultLogger.LogFatalf(ctx, "gin router handler panic +%v", r)
 		c.JSON(http.StatusInternalServerError, gin.H{
 			"error": "Internal Server Error",
 		})
@@ -62,7 +61,7 @@ func HandlePanic(c *gin.Context) {
 		}
 
 		if err := c.ShouldBindJSON(&requestData); err != nil {
-			log.LogErrorf(ctx, "Failed to parse request parameters: %v", err)
+			logger.DefaultLogger.LogErrorf(ctx, "Failed to parse request parameters: %v", err)
 			c.JSON(http.StatusBadRequest, gin.H{
 				"error": "Invalid request parameters",
 			})
@@ -80,17 +79,13 @@ func HandlePanic(c *gin.Context) {
 	}
 }
 
-type RequestHandler func(ctx context.Context, req module.Request) (res module.Response, err error)
+type RequestHandler func(c *gin.Context) (res module.Response, err error)
 
 func RequestPanicHandler(fn RequestHandler) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		ctx := c.Request.Context()
-		req := &module.BaseRequest{}
-		if err := c.ShouldBind(req); err != nil {
-			log.LogErrorf(ctx, "gin bind request failed with error +%v", err)
-		}
-		if res, err := fn(ctx, req); err != nil {
-			log.LogErrorf(ctx, "RequestHandler failed with error +%v", err)
+		if res, err := fn(c); err != nil {
+			logger.DefaultLogger.LogErrorf(ctx, "RequestHandler failed with error +%v", err)
 		} else {
 			// 返回结果
 			c.JSON(res.GetStatus(), res.GetBody())

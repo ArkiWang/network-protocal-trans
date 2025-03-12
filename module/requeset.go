@@ -2,6 +2,7 @@ package module
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/networkProtocalTrans/logger"
 )
 
 
@@ -32,7 +33,7 @@ func (b *BaseRequest) GetPayload(c *gin.Context) any{
 	ctx := c.Request.Context()
 	// 创建结构体实例并绑定查询参数
 	if err := c.ShouldBindQuery(b); err != nil {
-		log.LogErrorf(ctx, "GetPayload faild with error +%v", err)
+		logger.DefaultLogger.LogErrorf(ctx, "GetPayload faild with error +%v", err)
 		return nil
 	}
 	return b
