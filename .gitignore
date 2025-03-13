@@ -11,3 +11,7 @@
 *.txt
 
 __debug_bin*
+/logs
+/logs/*
+/logs/.*
+/logs/**/*

@@ -2,14 +2,17 @@ package services
 
 import (
 	"context"
-	"log"
+	"flag"
 	"net/http"
 	"sync"
 
 	"github.com/BurntSushi/toml"
+	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
 	"github.com/networkProtocalTrans/logger"
+	"github.com/networkProtocalTrans/util"
 )
+var addr = flag.String("addr", "localhost:8080", "http service address")
 
 // 添加配置结构
 type WSConfig struct {
@@ -111,40 +114,42 @@ var (
 	wsOnce          = sync.Once{}
 )
 
+
+
 // HandleConnections 处理websocket连接
 // TODO add panic handler
-func (s *websocketServer) HandleConnections(w http.ResponseWriter, r *http.Request) {
-	ws, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Printf("错误: %v", err)
-		return
-	}
-	defer ws.Close()
+func (s *websocketServer) HandleConnections(c *gin.Context) {
+	ctx := c.Request.Context()
+    w,r := c.Writer, c.Request
+    ws, err := upgrader.Upgrade(w, r, nil)
+    if err != nil {
+        s.logger.LogErrorf(ctx,"websocketServer Upgrade failed: %v", err)
+        return
+    }
+    defer ws.Close()
 
-	s.clients[ws] = true
+    s.clients[ws] = true
 
-	for {
-		messageType, message, err := ws.ReadMessage()
-		if err != nil {
-			log.Printf("错误: %v", err)
-			delete(s.clients, ws)
-			break
-		}
+    for {
+        messageType, message, err := ws.ReadMessage()
+        if err != nil {
+            s.logger.LogErrorf(ctx,"websocketServer ReadMessage failed: %v", err)
+            delete(s.clients, ws)
+            break
+        }
 
-		// 广播消息给所有客户端
-		for client := range s.clients {
-			if err := client.WriteMessage(messageType, message); err != nil {
-				log.Printf("错误: %v", err)
-				client.Close()
-				delete(s.clients, client)
-			}
-		}
-	}
+        // 广播消息给所有客户端
+        for client := range s.clients {
+            if err := client.WriteMessage(messageType, message); err != nil {
+                s.logger.LogErrorf(ctx,"websocketServer WriteMessage failed: %v", err)
+                client.Close()
+                delete(s.clients, client)
+            }
+        }
+    }
 }
 
-// StartServer 启动websocket服务器
-func (s *websocketServer) StartServer(addr string) error {
-	http.HandleFunc("/ws", s.HandleConnections)
-	log.Printf("Websocket服务器启动在 %s", addr)
-	return http.ListenAndServe(addr, nil)
+func (s *websocketServer)Test(c *gin.Context){
+	util.HomeTemplate.Execute(c.Writer, "ws://"+c.Request.Host+"/ws/echo")
 }
+

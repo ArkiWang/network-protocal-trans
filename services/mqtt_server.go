@@ -60,14 +60,6 @@ func GetMqttServer(ctx context.Context, logger *logger.AppLogger, configPath str
 	}
 
 	mqttOnce.Do(func() {
-		// 创建信号用于等待服务端关闭信号
-		sigs := make(chan os.Signal, 1)
-		done := make(chan bool, 1)
-		signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-		go func() {
-			<-sigs
-			done <- true
-		}()
 
 		// 加载配置
 		var config MQTTConfig
@@ -124,8 +116,7 @@ func GetMqttServer(ctx context.Context, logger *logger.AppLogger, configPath str
 				logger.LogFatal(ctx, "Failed to start MQTT server", "error", err)
 			}
 		})
-		// 服务端等待关闭信号
-		<-done
+		
 
 		// 关闭服务端时需要做的一些清理工作
 		defaultMqttServer = mqttServer

@@ -1,6 +1,3 @@
-# 日志级别: debug, info, warn, error
-log_level = "info"
-
 # 普通日志配置
 [log]
 # 基础日志目录

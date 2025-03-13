@@ -5,9 +5,9 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/networkProtocalTrans/controller"
 	"github.com/networkProtocalTrans/logger"
 	"github.com/networkProtocalTrans/module"
+	"github.com/networkProtocalTrans/services"
 )
 
 // 初始化路由
@@ -31,9 +31,14 @@ func InitRouter(ctx context.Context) *gin.Engine {
 			})
 		})
 	}
-	ws := r.Group("/api/ws")
+	ws := r.Group("/ws")
 	{
-		ws.GET("/test", RequestPanicHandler(controller.WSTestHandler))
+		// ws.GET("/test", RequestPanicHandler(controller.WSTestHandler))
+		/*
+		  /ws接收http协议后，前端js转为websocket协议，然后发送给后端/ws/echo
+		*/
+		ws.GET("/", services.WsServer.Test)
+		ws.GET("/echo", services.WsServer.HandleConnections)
 	}
 	return r
 }

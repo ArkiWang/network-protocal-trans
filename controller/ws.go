@@ -12,5 +12,5 @@ func WSTestHandler(c *gin.Context)(res module.Response, err error){
 		if err := c.ShouldBind(req); err != nil {
 			logger.DefaultLogger.LogErrorf(ctx, "gin bind request failed with error +%v", err)
 		}
-		return &module.BaseResponse{},nil
+		return &module.BaseResponse{Status: 0},nil
 }

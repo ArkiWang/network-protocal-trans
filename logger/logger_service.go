@@ -40,7 +40,6 @@ var (
 
 // 修改配置结构体
 type LogConfig struct {
-	LogLevel  string     `toml:"log_level"`
 	Log       LogFile    `toml:"log"`
 	AccessLog AccessFile `toml:"access_log"`
 }

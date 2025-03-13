@@ -12,6 +12,6 @@ var (
 )
 
 func InitServices(ctx context.Context) {
-	MqttServer = GetMqttServer(ctx, logger.DefaultLogger,"./conf/servicer/mqtt-test.toml")
-	WsServer = GetWebsocketServer(ctx, logger.DefaultLogger,"./conf/servicer/web-socket-test.toml")
+	MqttServer = GetMqttServer(ctx, logger.DefaultLogger, "./conf/servicer/mqtt-test.toml")
+	WsServer = GetWebsocketServer(ctx, logger.DefaultLogger, "./conf/servicer/web-socket-test.toml")
 }
